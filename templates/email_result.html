@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Generated Email - AI Email Generator{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Your Generated Email</h1>
+    <p class="muted">
+      <span class="badge">{{ email.purpose }}</span>
+      <span class="badge">{{ email.recipient_type }}</span>
+      <span class="badge">{{ email.tone }}</span>
+      <span class="badge">{{ email.language }}</span>
+    </p>
+  </div>
+  <div class="btn-row">
+    <a href="{% url 'generate_email' %}?reuse={{ email.pk }}" class="btn btn-outline">Edit inputs</a>
+    <a href="{% url 'generate_email' %}" class="btn btn-primary">New Email</a>
+  </div>
+</div>
+<p class="muted small">The email is already saved in your history. Edit it below, use the AI actions, then press Save Email to keep your changes.</p>
+{% include "_email_editor.html" %}
+{% endblock %}

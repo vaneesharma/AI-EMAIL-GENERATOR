@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Generate Email - AI Email Generator{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Generate Email</h1>
+    <p class="muted">Tell the AI what you need. It will write the subject and the email body.</p>
+  </div>
+</div>
+
+<div class="card">
+  <form method="post" id="generateForm" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>{% endif %}
+
+    <div class="grid-2">
+      {% include "_field.html" with field=form.purpose %}
+      {% include "_field.html" with field=form.custom_purpose %}
+    </div>
+    <div class="grid-3">
+      {% include "_field.html" with field=form.recipient_type %}
+      {% include "_field.html" with field=form.tone %}
+      {% include "_field.html" with field=form.language %}
+    </div>
+    {% include "_field.html" with field=form.important_points %}
+    {% include "_field.html" with field=form.additional_instructions %}
+
+    <button type="submit" class="btn btn-primary" id="generateBtn">Generate Email</button>
+    <p class="muted small" id="generateHint" hidden>Writing your email... this can take a few seconds.</p>
+  </form>
+</div>
+{% endblock %}

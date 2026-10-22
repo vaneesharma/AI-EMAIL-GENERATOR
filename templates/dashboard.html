@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - AI Email Generator{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Welcome, {{ user.username }}</h1>
+    <p class="muted">Here is a summary of your email activity.</p>
+  </div>
+  <a href="{% url 'generate_email' %}" class="btn btn-primary">Generate New Email</a>
+</div>
+
+<div class="stats">
+  <div class="card stat"><span class="stat-number">{{ total }}</span><span class="stat-label">Total Emails</span></div>
+  <div class="card stat"><span class="stat-number">{{ today }}</span><span class="stat-label">Generated Today</span></div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Recent Emails</h2>
+    {% if recent %}<a href="{% url 'email_history' %}">View all</a>{% endif %}
+  </div>
+  {% if recent %}
+    <ul class="recent-list">
+      {% for email in recent %}
+        <li>
+          <a href="{% url 'email_detail' email.pk %}">{{ email.subject }}</a>
+          <span class="muted">{{ email.purpose }} &middot; {{ email.created_at|date:"d M Y, H:i" }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="empty">You have not generated any emails yet. <a href="{% url 'generate_email' %}">Create your first one.</a></p>
+  {% endif %}
+</div>
+{% endblock %}

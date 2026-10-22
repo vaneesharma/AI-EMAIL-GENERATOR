@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Email History - AI Email Generator{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Email History</h1>
+    <p class="muted">All the emails you have generated.</p>
+  </div>
+  <a href="{% url 'generate_email' %}" class="btn btn-primary">Generate New Email</a>
+</div>
+
+<div class="card">
+  <form method="get" class="filter-form">
+    <div class="form-group">{{ filter_form.q }}</div>
+    <div class="form-group">{{ filter_form.purpose }}</div>
+    <div class="form-group">{{ filter_form.tone }}</div>
+    <div class="form-group">{{ filter_form.date }}{% for error in filter_form.date.errors %}<p class="field-error">{{ error }}</p>{% endfor %}</div>
+    <div class="btn-row">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      {% if filters_active %}<a href="{% url 'email_history' %}" class="btn btn-outline">Reset</a>{% endif %}
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  {% if page.object_list %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Subject</th><th>Purpose</th><th>Tone</th><th>Created</th><th class="col-preview">Preview</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for email in page %}
+        <tr>
+          <td><a href="{% url 'email_detail' email.pk %}">{{ email.subject }}</a></td>
+          <td>{{ email.purpose }}</td>
+          <td>{{ email.tone }}</td>
+          <td class="nowrap">{{ email.created_at|date:"d M Y" }}</td>
+          <td class="col-preview muted">{{ email.preview }}</td>
+          <td>
+            <div class="action-links">
+              <a class="btn btn-outline btn-sm" href="{% url 'email_detail' email.pk %}">View / Edit</a>
+              <button type="button" class="btn btn-outline btn-sm" data-copy-subject="{{ email.subject }}" data-copy-body="{{ email.body }}">Copy</button>
+              <a class="btn btn-outline btn-sm" href="{% url 'generate_email' %}?reuse={{ email.pk }}">Reuse</a>
+              <form method="post" action="{% url 'email_delete' email.pk %}" data-confirm="Delete this email permanently? This cannot be undone.">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page.paginator.num_pages > 1 %}
+  <div class="pagination">
+    {% if page.has_previous %}<a class="btn btn-outline btn-sm" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.previous_page_number }}">Previous</a>{% endif %}
+    <span class="muted">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a class="btn btn-outline btn-sm" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.next_page_number }}">Next</a>{% endif %}
+  </div>
+  {% endif %}
+  {% else %}
+    <p class="empty">
+      {% if filters_active %}No emails match your search. <a href="{% url 'email_history' %}">Reset filters</a>
+      {% else %}No emails yet. <a href="{% url 'generate_email' %}">Generate your first email.</a>{% endif %}
+    </p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ email.subject }} - AI Email Generator{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Email Details</h1>
+    <p class="muted">Created {{ email.created_at|date:"d M Y, H:i" }} &middot; Last updated {{ email.updated_at|date:"d M Y, H:i" }}</p>
+  </div>
+  <div class="btn-row">
+    <a href="{% url 'email_history' %}" class="btn btn-outline">Back to history</a>
+    <a href="{% url 'generate_email' %}?reuse={{ email.pk }}" class="btn btn-outline">Reuse</a>
+    <form method="post" action="{% url 'email_delete' email.pk %}" data-confirm="Delete this email permanently? This cannot be undone.">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+  </div>
+</div>
+
+<div class="card details">
+  <dl>
+    <div><dt>Purpose</dt><dd>{{ email.purpose }}</dd></div>
+    <div><dt>Recipient</dt><dd>{{ email.recipient_type }}</dd></div>
+    <div><dt>Tone</dt><dd>{{ email.tone }}</dd></div>
+    <div><dt>Language</dt><dd>{{ email.language }}</dd></div>
+  </dl>
+  <details>
+    <summary>Original inputs given to the AI</summary>
+    <p><strong>Important points:</strong></p>
+    <p class="pre">{{ email.important_points }}</p>
+    {% if email.additional_instructions %}
+      <p><strong>Additional instructions:</strong></p>
+      <p class="pre">{{ email.additional_instructions }}</p>
+    {% endif %}
+  </details>
+</div>
+
+{% include "_email_editor.html" %}
+{% endblock %}

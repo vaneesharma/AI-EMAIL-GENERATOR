@@ -1,0 +1,39 @@
+<div class="card editor" id="emailEditor" data-ai-url="{% url 'email_ai_action' email.pk %}">
+  <div class="ai-actions">
+    <span class="ai-label">AI actions:</span>
+    <button type="button" class="btn btn-outline btn-sm" data-ai-action="improve">Improve Email</button>
+    <button type="button" class="btn btn-outline btn-sm" data-ai-action="shorter">Make Shorter</button>
+    <button type="button" class="btn btn-outline btn-sm" data-ai-action="formal">Make More Formal</button>
+    <button type="button" class="btn btn-outline btn-sm" data-ai-action="friendly">Make Friendly</button>
+    <button type="button" class="btn btn-outline btn-sm" data-ai-action="regenerate">Regenerate</button>
+  </div>
+  <div class="alert" id="aiStatus" hidden></div>
+
+  <form method="post" action="{% url 'email_save' email.pk %}" id="editorForm" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>{% endif %}
+
+    <div class="form-group">
+      <div class="label-row">
+        <label for="{{ form.subject.id_for_label }}">Subject</label>
+        <button type="button" class="btn btn-outline btn-sm" data-copy-target="#{{ form.subject.id_for_label }}">Copy subject</button>
+      </div>
+      {{ form.subject }}
+      {% for error in form.subject.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    </div>
+
+    <div class="form-group">
+      <div class="label-row">
+        <label for="{{ form.body.id_for_label }}">Email</label>
+        <button type="button" class="btn btn-outline btn-sm" data-copy-target="#{{ form.body.id_for_label }}">Copy email</button>
+      </div>
+      {{ form.body }}
+      {% for error in form.body.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    </div>
+
+    <div class="btn-row">
+      <button type="submit" class="btn btn-primary">Save Email</button>
+      <span class="muted small" id="unsavedHint" hidden>You have unsaved changes.</span>
+    </div>
+  </form>
+</div>
